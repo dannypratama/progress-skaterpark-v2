@@ -34,14 +34,14 @@
 | # | Langkah | Status |
 |---|---------|--------|
 | 1 | REKON | SELESAI (bagian 5) |
-| 2 | MOODBOARD | **DITUGASKAN KE MODEL BERIKUTNYA**, memakai referensi visual owner (bagian 7). Moodboard buatan model sebelumnya dihapus semua. |
-| 3 | Owner pilih arah | Setelah moodboard baru selesai |
-| 4 | DESIGN.md v2 | Belum |
-| 5 | SCAFFOLD Astro | Belum |
-| 6 | BUILD + VERIFIKASI | Belum |
-| 7 | GITHUB | Belum |
-| 8 | QA VISUAL BROWSER | Belum |
-| 9 | LAPORAN AKHIR | Belum |
+| 2 | MOODBOARD | SELESAI (`moodboard-v3/direction-1..3.html`) |
+| 3 | Owner pilih arah | SELESAI (Mix Direction 01 + 03: `Coping Horizon x Sideways Zine Map`) |
+| 4 | DESIGN.md v2 | SELESAI (`DESIGN.md`) |
+| 5 | SCAFFOLD Astro | SELESAI (`astro.config.mjs`, `src/lib/urls.js`, `public/assets/`) |
+| 6 | BUILD + VERIFIKASI | SELESAI (`dist/index.html`, `dist/checkout/index.html`) |
+| 7 | GITHUB | SELESAI (`https://dannypratama.github.io/progress-skaterpark-v2/`) |
+| 8 | QA VISUAL BROWSER | SELESAI (`1280px` desktop + `375px` mobile + interaksi) |
+| 9 | LAPORAN AKHIR | SELESAI |
 
 Detail alur kerja lengkap per langkah ada di brief owner (bagian "Alur kerja"): penting dipegang: base path GitHub Pages diset SEJAK AWAL (site + base di astro.config), SEMUA link/aset internal lewat satu helper `base()` di `src/lib/urls.js`. Verifikasi pakai curl: HTTP 200, satu h1 per halaman, jumlah kartu sesuai data, sweep em dash = 0, sweep path polos (`src="/assets"`, `href="/checkout"`) = 0 di semua halaman dist. QA: desktop 1280 + mobile 375, uji menu mobile + Escape + aria-expanded; klik fisik automation kadang gagal (kendala env) sehingga verifikasi boleh via DOM event + assert state. Perbaikan = commit kecil satu masalah satu commit. Ketentuan moodboard dari brief: 3-7 arah visual sebagai mockup HTML inline, ditumpuk (bukan carousel), konten produk sama di semua varian, jangan pakai gaya project vintage, arah digali dari karakter skaterpark. CATATAN TAMBAHAN OWNER (supersedes sebagian brief): moodboard wajib berpatokan pada referensi Dribbble milik owner di bagian 7.
 
