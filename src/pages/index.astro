@@ -1,0 +1,734 @@
+---
+import Base from "../layouts/Base.astro";
+import { base } from "../lib/urls.js";
+import {
+  PARK_FACTS,
+  DECKS,
+  GALLERY_WAYPOINTS,
+  DISPATCHES,
+  COACHING_TIERS,
+} from "../data/parkData.js";
+---
+
+<Base
+  title="Progress Skaterpark Tegal // Public Concrete Skatepark & Skate School"
+  description={PARK_FACTS.lead}
+  current="home"
+>
+  <!-- Floating Cursor Photo Preview for Dispatches -->
+  <div id="floating-dispatch-preview" class="floating-dispatch-preview" aria-hidden="true">
+    <img
+      id="floating-dispatch-img"
+      src={base(DISPATCHES[0].img)}
+      alt=""
+      width="240"
+      height="160"
+      loading="lazy"
+    />
+  </div>
+
+  <!-- 1. FULL-VIEWPORT PINNED HERO WITH SPLITTEXT & PORTAL SCRUB -->
+  <section id="hero-stage" class="hero-pin-stage" data-cursor-label="SCROLL TO EXPAND">
+    <div class="hero-portal-bg" id="hero-portal">
+      <img
+        src={base("/assets/images/bg/hero-skatepark.jpg")}
+        alt="Skaters riding the concrete bowl and transition ramps at Progress Skaterpark Tegal"
+        width="1280"
+        height="849"
+        fetchpriority="high"
+      />
+      <div class="hero-portal-scrim"></div>
+    </div>
+
+    <div class="hero-foreground">
+      <div class="hero-meta-strip">
+        <span>COPING HORIZON X SIDEWAYS ZINE MAP // TEGAL CENTRAL JAVA</span>
+        <span>{PARK_FACTS.address.toUpperCase()}</span>
+        <span>OPEN {PARK_FACTS.hours.toUpperCase()} // {PARK_FACTS.entry.toUpperCase()}</span>
+      </div>
+
+      <div>
+        <p class="section-kicker">PUBLIC CONCRETE SKATEPARK &amp; PRIVATE SKATE SCHOOL</p>
+        <h1 class="hero-h1" id="hero-split-h1">{PARK_FACTS.tagline}</h1>
+        <p class="hero-sublead">
+          Scroll to open the floodlit bowl portal. Concrete transitions, street ledges, 8 pressed
+          maple decks, and private coaching every day from 08.00 to 22.00.
+        </p>
+        <div class="hero-cta-cluster">
+          <a href="#coaching" class="btn-red">Book a private lesson</a>
+          <a href="#blueprint-map" class="btn-ghost">See the park (11 Waypoints)</a>
+          <a href={base("/checkout/")} class="btn-ghost">Open 8-Deck Catalog Desk</a>
+        </div>
+      </div>
+
+      <div class="hero-telemetry-bar" role="region" aria-label="Official skatepark information">
+        <div><strong>ADDRESS:</strong> {PARK_FACTS.address}</div>
+        <div><strong>HOURS:</strong> {PARK_FACTS.hours}</div>
+        <div><strong>PASS:</strong> {PARK_FACTS.entry}</div>
+        <div>
+          <strong>CONTACT:</strong> WhatsApp {PARK_FACTS.whatsapp} / IG {PARK_FACTS.instagram}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. INTERACTIVE 8-DECK RADIAL FAN ARC -->
+  <section id="deck-fan" class="deck-fan-stage" data-cursor-label="SELECT DECK">
+    <div class="stage-top-row">
+      <div>
+        <p class="section-kicker">01 / RADIAL HARDWARE DEAL (8 MAPLE DECKS)</p>
+        <h2 class="section-h2">The 8-Deck Maple Fan.</h2>
+      </div>
+      <div class="fan-controls" role="group" aria-label="Deck fan controls">
+        <button type="button" class="hud-btn" id="fan-prev">Prev Deck</button>
+        <button type="button" class="hud-btn" id="fan-next">Next Deck</button>
+        <button type="button" class="hud-btn" id="fan-spread-toggle" aria-pressed="true">
+          Toggle Tight / Wide Fan
+        </button>
+        <button type="button" class="hud-btn" id="fan-state-empty" aria-pressed="false">
+          9.0 in+ Vert Filter (0)
+        </button>
+      </div>
+    </div>
+
+    <div
+      id="fan-empty-msg"
+      style="display:none; padding:24px; border:2px dashed var(--brand-red-hi); background:var(--bg-surface); font-family:var(--font-mono); margin:20px 0;"
+      role="status"
+      aria-live="polite"
+    >
+      <strong style="color:var(--brand-red-hi);">EMPTY FILTER STATE:</strong> Zero 9.0 in+ vert
+      decks in the current Tegal rack. All 8 pressed shapes range from 7.5 in to 8.5 in.
+      <button type="button" class="hud-btn" id="fan-reset-btn" style="margin-left:16px;">
+        Reset to All 8 Decks
+      </button>
+    </div>
+
+    <div
+      class="fan-wheel-arena"
+      id="fan-arena"
+      role="region"
+      aria-label="Interactive 8 skateboard deck radial fan"
+    >
+      {
+        DECKS.map((d, idx) => (
+          <div
+            class={`fan-deck-item${idx === 1 ? " is-selected" : ""}`}
+            tabindex="0"
+            role="button"
+            aria-label={`Select ${d.name} (${d.price})`}
+            data-deck-index={idx}
+            data-name={d.name}
+            data-brand={`${d.brand} // ${d.year}`}
+            data-price={d.price}
+            data-specs={d.specs}
+            data-note={d.concave}
+          >
+            <img
+              src={base(d.img)}
+              alt={`${d.brand} ${d.name} skateboard deck`}
+              width="165"
+              height="491"
+              loading="lazy"
+            />
+            <span class="fan-deck-badge">
+              {d.num} // {d.size}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="deck-readout-console" aria-live="polite">
+      <div>
+        <div
+          style="font-family:var(--font-mono); font-size:0.76rem; color:var(--brand-red-hi);"
+          id="active-deck-brand"
+        >
+          HABITAT // 2018
+        </div>
+        <h3 class="deck-readout-title" id="active-deck-name">Pink Floyd DSOTM 8.2 in</h3>
+        <div style="color:var(--text-muted); font-size:1.02rem;" id="active-deck-note">
+          All-terrain transition press with mellow kicks for mini-ramp and street.
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div class="deck-readout-price" id="active-deck-price">Rp 1.250.000</div>
+        <div
+          style="font-family:var(--font-mono); font-size:0.78rem; color:var(--text-muted);"
+          id="active-deck-specs"
+        >
+          Width 8.2 in / Length 31.8 in / Wheelbase 14.25 in
+        </div>
+        <div style="margin-top:8px;">
+          <a href={base("/checkout/")} class="btn-red" style="min-height:40px; padding:8px 16px;">
+            Inspect &amp; Reserve in Catalog Desk
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 11-WAYPOINT SPATIAL PARK BLUEPRINT MAP -->
+  <section id="blueprint-map" class="blueprint-section" data-cursor-label="MAP WAYPOINT">
+    <div class="stage-top-row">
+      <div>
+        <p class="section-kicker">02 / SPATIAL WAYPOINT PARK EXPLORER (11 CONCRETE STATIONS)</p>
+        <h2 class="section-h2">Interactive Floor Blueprint.</h2>
+      </div>
+      <div style="font-family:var(--font-mono); font-size:0.78rem; color:var(--text-muted);">
+        CLICK ANY WAYPOINT (WP 01 TO WP 11) TO MOVE THE FLOOR CAMERA
+      </div>
+    </div>
+
+    <div class="blueprint-stage">
+      <div class="blueprint-map-box">
+        <svg
+          viewBox="0 0 680 250"
+          width="100%"
+          height="220"
+          style="background:#070709; border:1px solid var(--border-strong);"
+          aria-label="Progress Skaterpark Tegal Floor Blueprint"
+        >
+          <rect
+            x="20"
+            y="20"
+            width="250"
+            height="210"
+            rx="26"
+            fill="none"
+            stroke="#FF5258"
+            stroke-width="3"
+          />
+          <text
+            x="38"
+            y="48"
+            fill="#FF5258"
+            font-family="monospace"
+            font-size="13"
+            font-weight="700"
+          >
+            ZONE A: SHALLOW BOWL &amp; MINI RAMP
+          </text>
+          <rect
+            x="290"
+            y="20"
+            width="370"
+            height="100"
+            fill="none"
+            stroke="#F5F3EE"
+            stroke-width="2"
+          />
+          <text
+            x="306"
+            y="48"
+            fill="#F5F3EE"
+            font-family="monospace"
+            font-size="13"
+            font-weight="700"
+          >
+            ZONE B: STREET PLAZA, HUBBA &amp; RAIL
+          </text>
+          <rect
+            x="290"
+            y="135"
+            width="370"
+            height="95"
+            fill="none"
+            stroke="#B2AEA4"
+            stroke-width="2"
+            stroke-dasharray="8 6"
+          />
+          <text
+            x="306"
+            y="165"
+            fill="#B2AEA4"
+            font-family="monospace"
+            font-size="13"
+            font-weight="700"
+          >
+            ZONE C/D: PYRAMID HIP, SCHOOL BANK &amp; PRO RACK
+          </text>
+          <circle
+            id="map-active-pulse"
+            cx="95"
+            cy="68"
+            r="13"
+            fill="#D61920"
+            stroke="#FFFFFF"
+            stroke-width="3"
+          />
+        </svg>
+
+        <div class="zone-waypoint-bar" role="tablist" aria-label="11 skatepark camera waypoints">
+          {
+            GALLERY_WAYPOINTS.map((wp, idx) => (
+              <button
+                type="button"
+                class="waypoint-btn"
+                role="tab"
+                aria-selected={idx === 0 ? "true" : "false"}
+                data-wp-idx={idx}
+                data-img={base(wp.img)}
+                data-title={wp.title}
+                data-zone={wp.zone}
+                data-desc={wp.desc}
+                data-cx={wp.cx}
+                data-cy={wp.cy}
+              >
+                WP {wp.num}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="blueprint-viewer" role="tabpanel" aria-live="polite">
+        <div>
+          <span
+            id="wp-zone"
+            style="font-family:var(--font-mono); color:var(--brand-red-hi); font-size:0.76rem; font-weight:700;"
+          >
+            {GALLERY_WAYPOINTS[0].zone}
+          </span>
+          <h3
+            id="wp-title"
+            style="font-family:var(--font-wide); font-size:1.45rem; text-transform:uppercase; margin:6px 0 12px;"
+          >
+            {GALLERY_WAYPOINTS[0].title}
+          </h3>
+          <img
+            id="wp-img"
+            src={base(GALLERY_WAYPOINTS[0].img)}
+            alt={`${GALLERY_WAYPOINTS[0].title} at Progress Skaterpark Tegal`}
+            width={GALLERY_WAYPOINTS[0].w}
+            height={GALLERY_WAYPOINTS[0].h}
+            loading="lazy"
+          />
+          <p id="wp-desc" style="color:var(--text-muted); margin:0;">
+            {GALLERY_WAYPOINTS[0].desc}
+          </p>
+        </div>
+        <div
+          style="margin-top:14px; font-family:var(--font-mono); font-size:0.75rem; border-top:1px solid var(--border-strong); padding-top:10px; color:var(--text-muted);"
+        >
+          WAYPOINT TELEMETRY // {PARK_FACTS.address.toUpperCase()} // {PARK_FACTS.hours.toUpperCase()}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. PINNED HORIZONTAL SCROLL-SCRUB PARK FILMSTRIP (11 PHOTOS) -->
+  <section id="filmstrip" class="filmstrip-pin-section" data-cursor-label="SCRUB REEL">
+    <div class="filmstrip-head">
+      <div>
+        <p class="section-kicker">03 / SCROLL-SCRUB CONCRETE REEL (11 FRAMES)</p>
+        <h2 class="section-h2">Jl. Pancasila 66 Floor Run.</h2>
+      </div>
+      <div style="font-family:var(--font-mono); font-size:0.78rem; color:var(--text-muted);">
+        SCROLL DOWN TO SCRUB ALL 11 PARK STATIONS HORIZONTALLY
+      </div>
+    </div>
+
+    <div class="filmstrip-track-wrap">
+      <div
+        class="filmstrip-track"
+        id="filmstrip-track"
+        role="region"
+        aria-label="11 skatepark gallery frames"
+      >
+        {
+          GALLERY_WAYPOINTS.map((g) => (
+            <article class="filmstrip-frame">
+              <img
+                src={base(g.img)}
+                alt={`${g.title} at Progress Skaterpark Tegal`}
+                width={g.w}
+                height={g.h}
+                loading="lazy"
+              />
+              <div class="filmstrip-caption">
+                <span class="filmstrip-zone">
+                  FRAME {g.num} // {g.zone}
+                </span>
+                <h3>{g.title}</h3>
+                <p>{g.desc}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. NON-GRID NEWS: FULL-WIDTH HOVER-PROJECTED DISPATCH STAGE (6 DISPATCHES) -->
+  <section id="dispatches" class="dispatches-stage" data-cursor-label="READ DISPATCH">
+    <div class="dispatch-bg-preview">
+      <img
+        id="dispatch-bg-img"
+        src={base(DISPATCHES[0].img)}
+        alt=""
+        width={DISPATCHES[0].w}
+        height={DISPATCHES[0].h}
+        loading="lazy"
+      />
+    </div>
+
+    <div style="position:relative; z-index:3;">
+      <p class="section-kicker">04 / HOVER-PROJECTED DISPATCH LEDGER (6 PARK BULLETINS)</p>
+      <h2 class="section-h2">Tegal Floor Dispatches.</h2>
+    </div>
+
+    <div class="dispatch-list-layer" role="region" aria-label="6 skatepark news dispatches">
+      {
+        DISPATCHES.map((item) => (
+          <article
+            class="dispatch-strip"
+            tabindex="0"
+            data-dispatch-img={base(item.img)}
+          >
+            <div>
+              <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--brand-red-hi);">
+                {item.num} // {item.date}
+              </span>
+              <h3 class="dispatch-strip-title">{item.title}</h3>
+              <p class="dispatch-strip-body">{item.body}</p>
+            </div>
+            <span style="font-family:var(--font-mono); font-size:0.76rem; color:var(--text-primary);">
+              [ HOVER / FOCUS TO PROJECT ]
+            </span>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 6. PRIVATE SKATE SCHOOL CONSOLE & ARCHITECTURAL STORY -->
+  <section id="coaching" class="coaching-console" data-cursor-label="BOOK LESSON">
+    <div
+      style="display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:space-between; margin-bottom:36px; padding-bottom:28px; border-bottom:1px solid var(--border-strong);"
+    >
+      <div style="flex:1 1 380px;">
+        <p class="section-kicker">05 / PRIVATE SKATE SCHOOL &amp; PARK ARCHITECTURE</p>
+        <h2 class="section-h2">Built for First Drop-Ins.</h2>
+        <p style="color:var(--text-muted); max-width:60ch; margin:12px 0 0;">
+          Located at {PARK_FACTS.fullAddress}. Daily park pass is {PARK_FACTS.entry} ({PARK_FACTS.hours}).
+          Our coaches run 1-on-1 and small-group sessions across three skill tiers. Select a tier
+          below to preview your lesson slot in the browser. No external message is sent.
+        </p>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:16px; flex:1 1 380px; justify-content:flex-end;">
+        <img
+          src={base("/assets/images/about/about-1.jpg")}
+          alt="Graffiti mural and concrete transition wall at Progress Skaterpark Tegal"
+          width="720"
+          height="480"
+          loading="lazy"
+          style="width:220px; height:150px; object-fit:cover; border:2px solid var(--border-strong);"
+        />
+        <img
+          src={base("/assets/images/about/about-2.jpg")}
+          alt="Concrete skatepark floor and quarter-pipe run at Progress Skaterpark Tegal"
+          width="720"
+          height="480"
+          loading="lazy"
+          style="width:220px; height:150px; object-fit:cover; border:2px solid var(--border-strong);"
+        />
+      </div>
+    </div>
+
+    <div class="tier-selector-ribbon" role="group" aria-label="Coaching skill tiers">
+      {
+        COACHING_TIERS.map((tier, idx) => (
+          <button
+            type="button"
+            class="tier-pill"
+            data-tier-btn={tier.value}
+            aria-pressed={idx === 1 ? "true" : "false"}
+          >
+            <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--brand-red-hi);">
+              {tier.level}
+            </div>
+            <div style="font-family:var(--font-display); font-size:1.85rem; text-transform:uppercase; margin:4px 0;">
+              {tier.title}
+            </div>
+            <div style="color:var(--text-muted); font-size:0.96rem;">{tier.desc}</div>
+          </button>
+        ))
+      }
+    </div>
+
+    <form id="booking-form" class="booking-inline-bar" novalidate>
+      <div class="field-unit">
+        <label for="rider-name">RIDER FULL NAME</label>
+        <input id="rider-name" type="text" placeholder="Your Name" required />
+      </div>
+      <div class="field-unit">
+        <label for="rider-phone">PHONE / WHATSAPP</label>
+        <input id="rider-phone" type="tel" placeholder="Your phone number" required />
+      </div>
+      <div class="field-unit">
+        <label for="rider-tier">SELECTED TIER</label>
+        <input
+          id="rider-tier"
+          type="text"
+          value={COACHING_TIERS[1].value}
+          readonly
+        />
+      </div>
+      <div class="field-unit">
+        <label for="rider-window">SESSION WINDOW</label>
+        <select id="rider-window">
+          <option value="08.00 - 10.00 (Morning Concrete)">08.00 - 10.00 (Morning Concrete)</option>
+          <option value="16.00 - 18.00 (Afternoon Session)">16.00 - 18.00 (Afternoon Session)</option>
+          <option value="19.00 - 21.00 (Night Floodlights)">19.00 - 21.00 (Night Floodlights)</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-red">Preview Lesson Summary</button>
+    </form>
+    <div id="booking-toast" class="preview-toast" role="status" aria-live="polite"></div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const isDesktop = window.innerWidth >= 768;
+
+      // 1. 8-Deck Radial Fan Positioning & Selection
+      const fanItems = Array.from(document.querySelectorAll(".fan-deck-item"));
+      let currentIdx = 1;
+      let wideSpread = true;
+
+      function layoutFan() {
+        if (reduced || window.innerWidth < 768) return;
+        const mid = (fanItems.length - 1) / 2;
+        const stepAngle = wideSpread ? 11 : 5.5;
+        const stepX = wideSpread ? 92 : 48;
+        fanItems.forEach((item, i) => {
+          const offset = i - mid;
+          const isSel = i === currentIdx;
+          const rot = offset * stepAngle;
+          const x = offset * stepX;
+          const y = Math.abs(offset) * (wideSpread ? 16 : 8) - (isSel ? 34 : 0);
+          const sc = isSel ? 1.12 : 0.94;
+          item.style.zIndex = String(isSel ? 30 : 10 + i);
+          if (window.gsap) {
+            gsap.to(item, {
+              x: x,
+              y: y,
+              rotation: rot,
+              scale: sc,
+              duration: 0.45,
+              ease: "power3.out",
+            });
+          } else {
+            item.style.transform =
+              "translate(" + x + "px, " + y + "px) rotate(" + rot + "deg) scale(" + sc + ")";
+          }
+        });
+      }
+
+      function selectDeck(idx) {
+        currentIdx = (idx + fanItems.length) % fanItems.length;
+        fanItems.forEach((el, i) => el.classList.toggle("is-selected", i === currentIdx));
+        const active = fanItems[currentIdx];
+        if (active) {
+          document.getElementById("active-deck-name").textContent =
+            active.getAttribute("data-name");
+          document.getElementById("active-deck-brand").textContent =
+            active.getAttribute("data-brand");
+          document.getElementById("active-deck-price").textContent =
+            active.getAttribute("data-price");
+          document.getElementById("active-deck-specs").textContent =
+            active.getAttribute("data-specs");
+          document.getElementById("active-deck-note").textContent =
+            active.getAttribute("data-note");
+        }
+        layoutFan();
+      }
+
+      fanItems.forEach((item, i) => {
+        item.addEventListener("click", () => selectDeck(i));
+        item.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            selectDeck(i);
+          }
+        });
+      });
+
+      const prevBtn = document.getElementById("fan-prev");
+      const nextBtn = document.getElementById("fan-next");
+      if (prevBtn) prevBtn.addEventListener("click", () => selectDeck(currentIdx - 1));
+      if (nextBtn) nextBtn.addEventListener("click", () => selectDeck(currentIdx + 1));
+
+      const spreadBtn = document.getElementById("fan-spread-toggle");
+      if (spreadBtn) {
+        spreadBtn.addEventListener("click", () => {
+          wideSpread = !wideSpread;
+          spreadBtn.setAttribute("aria-pressed", String(wideSpread));
+          layoutFan();
+        });
+      }
+
+      const emptyBtn = document.getElementById("fan-state-empty");
+      const emptyMsg = document.getElementById("fan-empty-msg");
+      const fanArena = document.getElementById("fan-arena");
+      const resetBtn = document.getElementById("fan-reset-btn");
+      if (emptyBtn && emptyMsg && fanArena) {
+        emptyBtn.addEventListener("click", () => {
+          const active = emptyBtn.getAttribute("aria-pressed") === "true";
+          emptyBtn.setAttribute("aria-pressed", String(!active));
+          emptyMsg.style.display = !active ? "block" : "none";
+          fanArena.style.display = !active ? "none" : "flex";
+        });
+      }
+      if (resetBtn && emptyBtn && emptyMsg && fanArena) {
+        resetBtn.addEventListener("click", () => {
+          emptyBtn.setAttribute("aria-pressed", "false");
+          emptyMsg.style.display = "none";
+          fanArena.style.display = "flex";
+        });
+      }
+
+      // 2. 11-Waypoint Blueprint Map Switcher
+      const wpBtns = document.querySelectorAll(".waypoint-btn[data-wp-idx]");
+      const pulse = document.getElementById("map-active-pulse");
+      wpBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          wpBtns.forEach((b) => b.setAttribute("aria-selected", String(b === btn)));
+          document.getElementById("wp-zone").textContent = btn.getAttribute("data-zone");
+          document.getElementById("wp-title").textContent = btn.getAttribute("data-title");
+          document.getElementById("wp-desc").textContent = btn.getAttribute("data-desc");
+          const img = document.getElementById("wp-img");
+          img.src = btn.getAttribute("data-img");
+          img.alt = btn.getAttribute("data-title") + " at Progress Skaterpark Tegal";
+          if (pulse) {
+            const cx = btn.getAttribute("data-cx");
+            const cy = btn.getAttribute("data-cy");
+            if (!reduced && window.gsap) {
+              gsap.to(pulse, { attr: { cx: cx, cy: cy }, duration: 0.4, ease: "back.out(1.7)" });
+            } else {
+              pulse.setAttribute("cx", cx);
+              pulse.setAttribute("cy", cy);
+            }
+          }
+        });
+      });
+
+      // 3. Dispatch Hover Backdrop + Floating Cursor Photo Preview
+      const bgImg = document.getElementById("dispatch-bg-img");
+      const floatPreview = document.getElementById("floating-dispatch-preview");
+      const floatImg = document.getElementById("floating-dispatch-img");
+      document.querySelectorAll(".dispatch-strip").forEach((strip) => {
+        const imgUrl = strip.getAttribute("data-dispatch-img");
+        const swap = () => {
+          if (bgImg) bgImg.src = imgUrl;
+          if (!reduced && isDesktop && floatPreview && floatImg) {
+            floatImg.src = imgUrl;
+            floatPreview.classList.add("is-visible");
+          }
+        };
+        strip.addEventListener("pointerenter", swap);
+        strip.addEventListener("focus", swap);
+        strip.addEventListener("pointermove", (e) => {
+          if (!reduced && isDesktop && floatPreview) {
+            floatPreview.style.left = e.clientX + "px";
+            floatPreview.style.top = e.clientY + "px";
+          }
+        });
+        strip.addEventListener("pointerleave", () => {
+          if (floatPreview) floatPreview.classList.remove("is-visible");
+        });
+      });
+
+      // 4. Coaching Tier Selection & Preview Toast
+      document.querySelectorAll("[data-tier-btn]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll("[data-tier-btn]")
+            .forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+          document.getElementById("rider-tier").value = btn.getAttribute("data-tier-btn");
+        });
+      });
+
+      const bookingForm = document.getElementById("booking-form");
+      if (bookingForm) {
+        bookingForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = document.getElementById("rider-name").value.trim();
+          const phone = document.getElementById("rider-phone").value.trim();
+          const tier = document.getElementById("rider-tier").value;
+          const win = document.getElementById("rider-window").value;
+          const toast = document.getElementById("booking-toast");
+          toast.setAttribute("data-open", "true");
+          if (!name || !phone) {
+            toast.textContent =
+              "VALIDATION STATE: Enter both rider full name and phone number to preview your lesson summary.";
+          } else {
+            toast.textContent =
+              "PORTFOLIO PREVIEW: Slot summary ready for " +
+              name +
+              " (" +
+              tier +
+              " / " +
+              win +
+              "). No external message is sent.";
+          }
+        });
+      }
+
+      // 5. GSAP + ScrollTrigger + SplitText
+      if (!reduced && window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+        if (window.SplitText) {
+          gsap.registerPlugin(SplitText);
+          (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+            const split = new SplitText("#hero-split-h1", { type: "words,chars" });
+            gsap.from(split.chars, {
+              yPercent: 110,
+              opacity: 0,
+              rotateX: -75,
+              stagger: 0.022,
+              duration: 0.85,
+              ease: "power4.out",
+            });
+          });
+        }
+
+        if (isDesktop) {
+          gsap.to("#hero-portal", {
+            clipPath: "circle(100% at 50% 50%)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: "#hero-stage",
+              start: "top top",
+              end: "+=850",
+              scrub: 1,
+              pin: true,
+            },
+          });
+
+          const track = document.getElementById("filmstrip-track");
+          if (track) {
+            gsap.to(track, {
+              x: () => -(track.scrollWidth - window.innerWidth + 120),
+              ease: "none",
+              scrollTrigger: {
+                trigger: "#filmstrip",
+                start: "top top",
+                end: () => "+=" + (track.scrollWidth - window.innerWidth + 120),
+                scrub: 1,
+                pin: true,
+                invalidateOnRefresh: true,
+              },
+            });
+          }
+        }
+      }
+
+      layoutFan();
+      window.addEventListener("resize", layoutFan);
+    })();
+  </script>
+</Base>

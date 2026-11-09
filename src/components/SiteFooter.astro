@@ -1,0 +1,20 @@
+---
+import { base } from "../lib/urls.js";
+import { PARK_FACTS } from "../data/parkData.js";
+---
+
+<footer class="site-footer">
+  <div>
+    <strong>{PARK_FACTS.name.toUpperCase()}</strong> // {PARK_FACTS.address}
+  </div>
+  <div>
+    OPEN {PARK_FACTS.hours.toUpperCase()} // ENTRY {PARK_FACTS.entry.toUpperCase()}
+  </div>
+  <div>
+    WHATSAPP {PARK_FACTS.whatsapp} (PLAIN TEXT) // IG{" "}
+    <a href={PARK_FACTS.instagramUrl} target="_blank" rel="noopener noreferrer">
+      {PARK_FACTS.instagram}
+    </a>{" "}
+    // <a href={base("/checkout/")}>CATALOG &amp; RESERVATION DESK</a>
+  </div>
+</footer>

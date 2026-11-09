@@ -1,0 +1,336 @@
+---
+import Base from "../layouts/Base.astro";
+import { base } from "../lib/urls.js";
+import { PARK_FACTS, DECKS, COACHING_TIERS } from "../data/parkData.js";
+---
+
+<Base
+  title="Catalog & Reservation Desk // Progress Skaterpark Tegal"
+  description="Inspect all 8 pressed 7-ply maple skateboard decks (Rp 750.000 to Rp 1.350.000) and preview your in-person pickup or coaching slot at Jl. Pancasila 66, Tegal."
+  current="checkout"
+>
+  <!-- 1. CHECKOUT & CATALOG MASTHEAD -->
+  <section class="checkout-hero" data-cursor-label="CATALOG DESK">
+    <p class="section-kicker">PRO SHOP &amp; LESSON RESERVATION DESK // PORTFOLIO PREVIEW</p>
+    <h1 class="hero-h1" style="font-size:clamp(2.8rem, 7vw, 6.2rem); margin-bottom:12px;">
+      8-Deck Hardware Ledger &amp; Pickup Desk.
+    </h1>
+    <p class="hero-sublead" style="margin-bottom:18px;">
+      Select any of the 8 pressed 7-ply maple decks below to inspect nose, tail, and wheelbase
+      telemetry or generate an in-browser reservation preview for pickup at {PARK_FACTS.address}.
+    </p>
+    <div style="display:flex; flex-wrap:wrap; gap:12px;">
+      <a href={base("/")} class="btn-ghost">Back to Skatepark Stage</a>
+      <button type="button" class="hud-btn" id="checkout-empty-filter" aria-pressed="false">
+        Filter: 9.0 in+ Vert Decks (0)
+      </button>
+    </div>
+  </section>
+
+  <!-- 2. NON-GRID SPLIT MONOLITH CATALOG & RESERVATION INSPECTOR -->
+  <section class="checkout-split-stage" data-cursor-label="INSPECT DECK">
+    <div class="checkout-ledger-col" role="region" aria-label="8 skateboard decks catalog ledger">
+      <div
+        id="checkout-empty-box"
+        style="display:none; padding:24px; border:2px dashed var(--brand-red-hi); background:var(--bg-surface); font-family:var(--font-mono); margin-bottom:16px;"
+        role="status"
+        aria-live="polite"
+      >
+        <strong style="color:var(--brand-red-hi);">EMPTY FILTER STATE:</strong> Zero 9.0 in+ vert
+        decks in stock. Our Tegal shop pressings run from 7.5 in to 8.5 in.
+        <button type="button" class="hud-btn" id="checkout-reset-filter" style="margin-left:14px;">
+          Show All 8 Decks
+        </button>
+      </div>
+
+      <div id="checkout-rows-wrap">
+        {
+          DECKS.map((d, idx) => (
+            <div
+              class={`checkout-deck-row${idx === 0 ? " is-active" : ""}`}
+              tabindex="0"
+              role="button"
+              aria-pressed={idx === 0 ? "true" : "false"}
+              data-c-idx={idx}
+              data-name={d.name}
+              data-brand={`${d.brand} // ${d.year}`}
+              data-price={d.price}
+              data-img={base(d.img)}
+              data-specs={d.specs}
+              data-nosetail={d.noseTail}
+              data-concave={d.concave}
+            >
+              <div style="display:flex; align-items:center; gap:16px;">
+                <img
+                  src={base(d.img)}
+                  alt={`${d.brand} ${d.name} skateboard deck`}
+                  width="165"
+                  height="491"
+                  fetchpriority={idx === 0 ? "high" : undefined}
+                  loading={idx === 0 ? undefined : "lazy"}
+                />
+                <div>
+                  <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--brand-red-hi);">
+                    DECK {d.num} // {d.brand.toUpperCase()} ({d.year})
+                  </div>
+                  <h2 style="font-family:var(--font-wide); font-size:1.2rem; text-transform:uppercase; margin:4px 0;">
+                    {d.name}
+                  </h2>
+                  <div style="font-family:var(--font-mono); font-size:0.76rem; color:var(--text-muted);">
+                    {d.specs} // {d.noseTail}
+                  </div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-family:var(--font-display); font-size:1.85rem; color:var(--brand-red-hi); font-weight:900;">
+                  {d.price}
+                </div>
+                <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-primary);">
+                  [ INSPECT / SELECT ]
+                </span>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <aside class="checkout-inspector-col" aria-live="polite">
+      <div
+        id="insp-brand"
+        style="font-family:var(--font-mono); font-size:0.75rem; color:var(--brand-red-hi); font-weight:700;"
+      >
+        {DECKS[0].brand.toUpperCase()} // {DECKS[0].year}
+      </div>
+      <h2
+        id="insp-name"
+        style="font-family:var(--font-wide); font-size:1.55rem; text-transform:uppercase; margin:6px 0 14px;"
+      >
+        {DECKS[0].name}
+      </h2>
+
+      <div style="display:flex; justify-content:center; padding:16px; background:var(--bg-void); border:1px solid var(--border-strong); margin-bottom:16px;">
+        <img
+          id="insp-img"
+          src={base(DECKS[0].img)}
+          alt={`${DECKS[0].brand} ${DECKS[0].name} skateboard deck`}
+          width="165"
+          height="491"
+          style="width:auto; height:240px; object-fit:contain;"
+        />
+      </div>
+
+      <div
+        id="insp-price"
+        style="font-family:var(--font-display); font-size:2.4rem; color:var(--brand-red-hi); font-weight:900; line-height:1;"
+      >
+        {DECKS[0].price}
+      </div>
+      <p
+        id="insp-specs"
+        style="font-family:var(--font-mono); font-size:0.78rem; color:var(--text-primary); margin:8px 0 4px;"
+      >
+        {DECKS[0].specs} // {DECKS[0].noseTail}
+      </p>
+      <p id="insp-concave" style="color:var(--text-muted); font-size:0.95rem; margin:0 0 18px;">
+        {DECKS[0].concave}
+      </p>
+
+      <form id="reserve-form" style="display:flex; flex-direction:column; gap:12px;" novalidate>
+        <div class="field-unit">
+          <label for="res-name">RIDER NAME</label>
+          <input id="res-name" type="text" placeholder="Your full name" required />
+        </div>
+        <div class="field-unit">
+          <label for="res-deck">SELECTED DECK</label>
+          <input
+            id="res-deck"
+            type="text"
+            value={`${DECKS[0].name} (${DECKS[0].price})`}
+            readonly
+          />
+        </div>
+        <div class="field-unit">
+          <label for="res-addon">OPTIONAL LESSON ADD-ON</label>
+          <select id="res-addon">
+            <option value="Deck Pickup Only (Rp 50.000 Day Pass at Gate)">
+              Deck Pickup Only (Rp 50.000 Day Pass at Gate)
+            </option>
+            {
+              COACHING_TIERS.map((t) => (
+                <option value={`+ ${t.value}`}>+ {t.value}</option>
+              ))
+            }
+          </select>
+        </div>
+        <button type="submit" class="btn-red" style="width:100%;">
+          Generate Reservation Preview (Demo)
+        </button>
+      </form>
+
+      <div id="reserve-toast" class="preview-toast" role="status" aria-live="polite"></div>
+    </aside>
+  </section>
+
+  <!-- 3. OFFICIAL PARK CHANNELS & VISIT TELEMETRY -->
+  <section class="coaching-console">
+    <p class="section-kicker">OFFICIAL TEGAL CHANNELS &amp; IN-PERSON COUNTER</p>
+    <h2 class="section-h2">Visit Jl. Pancasila 66.</h2>
+    <p style="color:var(--text-muted); max-width:64ch; margin:10px 0 0;">
+      Note: Deck catalog prices above are portfolio demonstrations (`R-37` override). Real skatepark
+      operating hours, Rp 50.000 daily entry pass, and official Tegal contact channels below are
+      verified.
+    </p>
+
+    <div class="channel-strip">
+      <div class="channel-pill">
+        <img
+          src={base("/assets/images/social/whatsapp.png")}
+          alt="WhatsApp icon"
+          width="44"
+          height="44"
+          loading="lazy"
+        />
+        <div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--brand-red-hi);">
+            WHATSAPP DESK (PLAIN TEXT)
+          </div>
+          <div style="font-weight:700; font-size:1.1rem;">{PARK_FACTS.whatsapp}</div>
+          <div style="font-size:0.85rem; color:var(--text-muted);">
+            Ask about daily session weather &amp; coach availability
+          </div>
+        </div>
+      </div>
+
+      <div class="channel-pill">
+        <img
+          src={base("/assets/images/social/instagram.png")}
+          alt="Instagram icon"
+          width="44"
+          height="44"
+          loading="lazy"
+        />
+        <div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--brand-red-hi);">
+            INSTAGRAM
+          </div>
+          <div style="font-weight:700; font-size:1.1rem;">
+            <a
+              href={PARK_FACTS.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style="color:var(--text-primary);"
+            >
+              {PARK_FACTS.instagram}
+            </a>
+          </div>
+          <div style="font-size:0.85rem; color:var(--text-muted);">
+            Saturday night floodlit clips &amp; jam updates
+          </div>
+        </div>
+      </div>
+
+      <div class="channel-pill">
+        <img
+          src={base("/assets/images/social/shopee.png")}
+          alt="Shopee icon"
+          width="44"
+          height="44"
+          loading="lazy"
+        />
+        <div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--brand-red-hi);">
+            PRO SHOP COUNTER
+          </div>
+          <div style="font-weight:700; font-size:1.1rem;">{PARK_FACTS.address}</div>
+          <div style="font-size:0.85rem; color:var(--text-muted);">
+            Open {PARK_FACTS.hours} // Entry {PARK_FACTS.entry}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function () {
+      const rows = document.querySelectorAll(".checkout-deck-row");
+      rows.forEach((row) => {
+        const activate = () => {
+          rows.forEach((r) => {
+            r.classList.toggle("is-active", r === row);
+            r.setAttribute("aria-pressed", String(r === row));
+          });
+          const name = row.getAttribute("data-name");
+          const brand = row.getAttribute("data-brand");
+          const price = row.getAttribute("data-price");
+          const img = row.getAttribute("data-img");
+          const specs = row.getAttribute("data-specs");
+          const nosetail = row.getAttribute("data-nosetail");
+          const concave = row.getAttribute("data-concave");
+
+          document.getElementById("insp-brand").textContent = brand;
+          document.getElementById("insp-name").textContent = name;
+          document.getElementById("insp-price").textContent = price;
+          document.getElementById("insp-specs").textContent = specs + " // " + nosetail;
+          document.getElementById("insp-concave").textContent = concave;
+          const imgEl = document.getElementById("insp-img");
+          imgEl.src = img;
+          imgEl.alt = brand + " " + name + " skateboard deck";
+          document.getElementById("res-deck").value = name + " (" + price + ")";
+        };
+        row.addEventListener("click", activate);
+        row.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            activate();
+          }
+        });
+      });
+
+      const emptyBtn = document.getElementById("checkout-empty-filter");
+      const emptyBox = document.getElementById("checkout-empty-box");
+      const rowsWrap = document.getElementById("checkout-rows-wrap");
+      const resetBtn = document.getElementById("checkout-reset-filter");
+      if (emptyBtn && emptyBox && rowsWrap) {
+        emptyBtn.addEventListener("click", () => {
+          const active = emptyBtn.getAttribute("aria-pressed") === "true";
+          emptyBtn.setAttribute("aria-pressed", String(!active));
+          emptyBox.style.display = !active ? "block" : "none";
+          rowsWrap.style.display = !active ? "none" : "block";
+        });
+      }
+      if (resetBtn && emptyBtn && emptyBox && rowsWrap) {
+        resetBtn.addEventListener("click", () => {
+          emptyBtn.setAttribute("aria-pressed", "false");
+          emptyBox.style.display = "none";
+          rowsWrap.style.display = "block";
+        });
+      }
+
+      const resForm = document.getElementById("reserve-form");
+      if (resForm) {
+        resForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = document.getElementById("res-name").value.trim();
+          const deck = document.getElementById("res-deck").value;
+          const addon = document.getElementById("res-addon").value;
+          const toast = document.getElementById("reserve-toast");
+          toast.setAttribute("data-open", "true");
+          if (!name) {
+            toast.textContent =
+              "VALIDATION STATE: Please enter your rider name to generate a reservation preview.";
+          } else {
+            toast.textContent =
+              "PORTFOLIO PREVIEW: Reservation ticket generated for " +
+              name +
+              " / " +
+              deck +
+              " (" +
+              addon +
+              ") at Jl. Pancasila 66, Tegal. No external message is sent.";
+          }
+        });
+      }
+    })();
+  </script>
+</Base>

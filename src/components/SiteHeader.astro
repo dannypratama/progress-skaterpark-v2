@@ -1,0 +1,76 @@
+---
+import { base } from "../lib/urls.js";
+import { PARK_FACTS } from "../data/parkData.js";
+
+const { current = "home" } = Astro.props;
+const tickerLine = `${PARK_FACTS.name.toUpperCase()} TEGAL // ${PARK_FACTS.address.toUpperCase()} // OPEN ${PARK_FACTS.hours.toUpperCase()} // ENTRY ${PARK_FACTS.entry.toUpperCase()} // WA ${PARK_FACTS.whatsapp} // IG ${PARK_FACTS.instagram.toUpperCase()}`;
+---
+
+<header class="site-topbar">
+  <div class="ticker-bar" role="region" aria-label="Skatepark operating hours and ticket ticker">
+    <div class="ticker-viewport">
+      <div id="top-ticker-track" class="ticker-track" data-paused="false">
+        <span>{tickerLine}</span>
+        <span aria-hidden="true">{tickerLine}</span>
+      </div>
+    </div>
+    <button type="button" class="ticker-pause-btn" id="ticker-pause-btn" aria-pressed="false">
+      Pause
+    </button>
+  </div>
+
+  <div class="hud-navbar">
+    <a href={base("/")} class="brand-rig" aria-label="Progress Skaterpark Tegal Home">
+      <img
+        src={base("/assets/images/logo/skatepark-logo.png")}
+        alt="Progress Skaterpark Tegal stencil pyramid logo"
+        width="40"
+        height="40"
+      />
+      <span class="eye-socket" aria-hidden="true"><span class="eye-pupil"></span></span>
+      <span class="eye-socket" aria-hidden="true"><span class="eye-pupil"></span></span>
+      <span class="brand-title">PROGRESS SKATERPARK</span>
+    </a>
+
+    <button
+      type="button"
+      class="menu-btn"
+      id="menu-btn"
+      aria-expanded="false"
+      aria-controls="hud-nav-list"
+    >
+      MENU
+    </button>
+
+    <nav aria-label="Primary navigation">
+      <ul id="hud-nav-list" class="nav-links" data-open="false">
+        <li>
+          <a href={base("/#deck-fan")} aria-current={current === "home" ? "page" : undefined}>
+            01. Deck Fan (8)
+          </a>
+        </li>
+        <li>
+          <a href={base("/#blueprint-map")}>02. Park Map (11)</a>
+        </li>
+        <li>
+          <a href={base("/#filmstrip")}>03. Park Reel</a>
+        </li>
+        <li>
+          <a href={base("/#dispatches")}>04. Dispatches (6)</a>
+        </li>
+        <li>
+          <a href={base("/#coaching")}>05. Skate School</a>
+        </li>
+        <li>
+          <a
+            href={base("/checkout/")}
+            class="nav-cta"
+            aria-current={current === "checkout" ? "page" : undefined}
+          >
+            Catalog &amp; Reserve
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
