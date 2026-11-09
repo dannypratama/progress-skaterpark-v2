@@ -428,6 +428,40 @@ textarea:focus-visible,
   background: linear-gradient(180deg, rgba(7, 7, 9, 0.84) 0%, rgba(7, 7, 9, 0.42) 50%, rgba(7, 7, 9, 0.92) 100%);
 }
 
+.hero-floating-rig {
+  position: absolute;
+  right: 8vw;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  pointer-events: none;
+  perspective: 900px;
+}
+
+.hero-floating-deck {
+  width: 155px;
+  height: auto;
+  filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 28px rgba(214, 25, 32, 0.45));
+  will-change: transform;
+}
+
+.filmstrip-progress-track {
+  width: 220px;
+  height: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.filmstrip-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: var(--brand-red-hi);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
 .hero-foreground {
   position: relative;
   z-index: 3;
@@ -667,7 +701,7 @@ textarea:focus-visible,
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 6vh 0;
+  padding: 122px 0 6vh;
   overflow: hidden;
 }
 
@@ -1003,6 +1037,9 @@ textarea:focus-visible,
   .hero-portal-bg {
     clip-path: circle(100% at 50% 50%) !important;
   }
+  .hero-floating-rig {
+    display: none;
+  }
   .fan-wheel-arena {
     height: auto;
     overflow-x: auto;
@@ -1046,6 +1083,9 @@ textarea:focus-visible,
   }
   .hero-portal-bg {
     clip-path: circle(100% at 50% 50%) !important;
+  }
+  .hero-floating-rig {
+    display: none;
   }
   .fan-wheel-arena {
     height: auto;

@@ -12,12 +12,16 @@ import { PARK_FACTS, DECKS, COACHING_TIERS } from "../data/parkData.js";
   <!-- 1. CHECKOUT & CATALOG MASTHEAD -->
   <section class="checkout-hero" data-cursor-label="CATALOG DESK">
     <p class="section-kicker">PRO SHOP &amp; LESSON RESERVATION DESK // PORTFOLIO PREVIEW</p>
-    <h1 class="hero-h1" style="font-size:clamp(2.8rem, 7vw, 6.2rem); margin-bottom:12px;">
+    <h1
+      id="checkout-h1"
+      class="hero-h1"
+      style="font-size:clamp(2.8rem, 7vw, 6.2rem); margin-bottom:12px;"
+    >
       8-Deck Hardware Ledger &amp; Pickup Desk.
     </h1>
     <p class="hero-sublead" style="margin-bottom:18px;">
-      Select any of the 8 pressed 7-ply maple decks below to inspect nose, tail, and wheelbase
-      telemetry or generate an in-browser reservation preview for pickup at {PARK_FACTS.address}.
+      Hover or click any of the 8 pressed 7-ply maple decks below to flip the 3D hardware inspector
+      or generate an in-browser reservation preview for pickup at {PARK_FACTS.address}.
     </p>
     <div style="display:flex; flex-wrap:wrap; gap:12px;">
       <a href={base("/")} class="btn-ghost">Back to Skatepark Stage</a>
@@ -86,7 +90,7 @@ import { PARK_FACTS, DECKS, COACHING_TIERS } from "../data/parkData.js";
                   {d.price}
                 </div>
                 <span style="font-family:var(--font-mono); font-size:0.72rem; color:var(--text-primary);">
-                  [ INSPECT / SELECT ]
+                  [ HOVER / CLICK TO FLIP ]
                 </span>
               </div>
             </div>
@@ -95,7 +99,7 @@ import { PARK_FACTS, DECKS, COACHING_TIERS } from "../data/parkData.js";
       </div>
     </div>
 
-    <aside class="checkout-inspector-col" aria-live="polite">
+    <aside class="checkout-inspector-col" aria-live="polite" style="perspective:900px;">
       <div
         id="insp-brand"
         style="font-family:var(--font-mono); font-size:0.75rem; color:var(--brand-red-hi); font-weight:700;"
@@ -109,14 +113,14 @@ import { PARK_FACTS, DECKS, COACHING_TIERS } from "../data/parkData.js";
         {DECKS[0].name}
       </h2>
 
-      <div style="display:flex; justify-content:center; padding:16px; background:var(--bg-void); border:1px solid var(--border-strong); margin-bottom:16px;">
+      <div style="display:flex; justify-content:center; padding:16px; background:var(--bg-void); border:1px solid var(--border-strong); margin-bottom:16px; perspective:800px;">
         <img
           id="insp-img"
           src={base(DECKS[0].img)}
           alt={`${DECKS[0].brand} ${DECKS[0].name} skateboard deck`}
           width="165"
           height="491"
-          style="width:auto; height:240px; object-fit:contain;"
+          style="width:auto; height:240px; object-fit:contain; will-change:transform;"
         />
       </div>
 
@@ -253,9 +257,13 @@ import { PARK_FACTS, DECKS, COACHING_TIERS } from "../data/parkData.js";
 
   <script is:inline>
     (function () {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const isDesktop = window.innerWidth >= 768;
       const rows = document.querySelectorAll(".checkout-deck-row");
+
       rows.forEach((row) => {
         const activate = () => {
+          const alreadyActive = row.classList.contains("is-active");
           rows.forEach((r) => {
             r.classList.toggle("is-active", r === row);
             r.setAttribute("aria-pressed", String(r === row));
@@ -277,8 +285,19 @@ import { PARK_FACTS, DECKS, COACHING_TIERS } from "../data/parkData.js";
           imgEl.src = img;
           imgEl.alt = brand + " " + name + " skateboard deck";
           document.getElementById("res-deck").value = name + " (" + price + ")";
+
+          if (!reduced && !alreadyActive && window.gsap) {
+            gsap.fromTo(
+              imgEl,
+              { rotationY: -90, scale: 0.85, opacity: 0.25 },
+              { rotationY: 0, scale: 1, opacity: 1, duration: 0.48, ease: "back.out(1.7)", overwrite: "auto" }
+            );
+          }
         };
         row.addEventListener("click", activate);
+        row.addEventListener("pointerenter", () => {
+          if (isDesktop) activate();
+        });
         row.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -329,6 +348,34 @@ import { PARK_FACTS, DECKS, COACHING_TIERS } from "../data/parkData.js";
               addon +
               ") at Jl. Pancasila 66, Tegal. No external message is sent.";
           }
+          if (!reduced && window.gsap) {
+            gsap.fromTo(toast, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.28 });
+          }
+        });
+      }
+
+      // GSAP SplitText & Ledger Stagger on Checkout Page
+      if (!reduced && window.gsap) {
+        if (window.SplitText) {
+          gsap.registerPlugin(SplitText);
+          (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+            const split = new SplitText("#checkout-h1", { type: "words,chars" });
+            gsap.from(split.chars, {
+              yPercent: 100,
+              opacity: 0,
+              stagger: 0.018,
+              duration: 0.7,
+              ease: "power3.out",
+            });
+          });
+        }
+        gsap.from(".checkout-deck-row", {
+          x: -30,
+          opacity: 0,
+          stagger: 0.06,
+          duration: 0.5,
+          ease: "power2.out",
+          delay: 0.15,
         });
       }
     })();

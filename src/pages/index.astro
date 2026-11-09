@@ -27,10 +27,11 @@ import {
     />
   </div>
 
-  <!-- 1. FULL-VIEWPORT PINNED HERO WITH SPLITTEXT & PORTAL SCRUB -->
+  <!-- 1. FULL-VIEWPORT PINNED HERO WITH SPLITTEXT, 3D FLOATING DECK & PORTAL SCRUB -->
   <section id="hero-stage" class="hero-pin-stage" data-cursor-label="SCROLL TO EXPAND">
     <div class="hero-portal-bg" id="hero-portal">
       <img
+        id="hero-portal-img"
         src={base("/assets/images/bg/hero-skatepark.jpg")}
         alt="Skaters riding the concrete bowl and transition ramps at Progress Skaterpark Tegal"
         width="1280"
@@ -38,6 +39,17 @@ import {
         fetchpriority="high"
       />
       <div class="hero-portal-scrim"></div>
+    </div>
+
+    <div class="hero-floating-rig" aria-hidden="true">
+      <img
+        id="hero-floating-deck"
+        class="hero-floating-deck"
+        src={base("/assets/images/decks/deck-floyd.png")}
+        alt=""
+        width="165"
+        height="491"
+      />
     </div>
 
     <div class="hero-foreground">
@@ -48,20 +60,27 @@ import {
       </div>
 
       <div>
-        <p class="section-kicker">PUBLIC CONCRETE SKATEPARK &amp; PRIVATE SKATE SCHOOL</p>
+        <p class="section-kicker" id="hero-kicker">
+          PUBLIC CONCRETE SKATEPARK &amp; PRIVATE SKATE SCHOOL
+        </p>
         <h1 class="hero-h1" id="hero-split-h1">{PARK_FACTS.tagline}</h1>
-        <p class="hero-sublead">
+        <p class="hero-sublead" id="hero-sublead">
           Scroll to open the floodlit bowl portal. Concrete transitions, street ledges, 8 pressed
           maple decks, and private coaching every day from 08.00 to 22.00.
         </p>
-        <div class="hero-cta-cluster">
+        <div class="hero-cta-cluster" id="hero-ctas">
           <a href="#coaching" class="btn-red">Book a private lesson</a>
           <a href="#blueprint-map" class="btn-ghost">See the park (11 Waypoints)</a>
           <a href={base("/checkout/")} class="btn-ghost">Open 8-Deck Catalog Desk</a>
         </div>
       </div>
 
-      <div class="hero-telemetry-bar" role="region" aria-label="Official skatepark information">
+      <div
+        class="hero-telemetry-bar"
+        id="hero-telemetry"
+        role="region"
+        aria-label="Official skatepark information"
+      >
         <div><strong>ADDRESS:</strong> {PARK_FACTS.address}</div>
         <div><strong>HOURS:</strong> {PARK_FACTS.hours}</div>
         <div><strong>PASS:</strong> {PARK_FACTS.entry}</div>
@@ -84,6 +103,9 @@ import {
         <button type="button" class="hud-btn" id="fan-next">Next Deck</button>
         <button type="button" class="hud-btn" id="fan-spread-toggle" aria-pressed="true">
           Toggle Tight / Wide Fan
+        </button>
+        <button type="button" class="hud-btn" id="fan-autoplay-toggle" aria-pressed="false">
+          Auto-Cycle Fan
         </button>
         <button type="button" class="hud-btn" id="fan-state-empty" aria-pressed="false">
           9.0 in+ Vert Filter (0)
@@ -139,7 +161,7 @@ import {
       }
     </div>
 
-    <div class="deck-readout-console" aria-live="polite">
+    <div class="deck-readout-console" id="deck-readout-box" aria-live="polite">
       <div>
         <div
           style="font-family:var(--font-mono); font-size:0.76rem; color:var(--brand-red-hi);"
@@ -177,7 +199,7 @@ import {
         <h2 class="section-h2">Interactive Floor Blueprint.</h2>
       </div>
       <div style="font-family:var(--font-mono); font-size:0.78rem; color:var(--text-muted);">
-        CLICK ANY WAYPOINT (WP 01 TO WP 11) TO MOVE THE FLOOR CAMERA
+        HOVER OR CLICK ANY WAYPOINT (WP 01 TO WP 11) TO MOVE THE FLOOR CAMERA
       </div>
     </div>
 
@@ -191,6 +213,7 @@ import {
           aria-label="Progress Skaterpark Tegal Floor Blueprint"
         >
           <rect
+            class="blueprint-zone-rect"
             x="20"
             y="20"
             width="250"
@@ -211,6 +234,7 @@ import {
             ZONE A: SHALLOW BOWL &amp; MINI RAMP
           </text>
           <rect
+            class="blueprint-zone-rect"
             x="290"
             y="20"
             width="370"
@@ -230,6 +254,7 @@ import {
             ZONE B: STREET PLAZA, HUBBA &amp; RAIL
           </text>
           <rect
+            class="blueprint-zone-rect"
             x="290"
             y="135"
             width="370"
@@ -250,10 +275,19 @@ import {
             ZONE C/D: PYRAMID HIP, SCHOOL BANK &amp; PRO RACK
           </text>
           <circle
+            id="map-pulse-ring"
+            cx="95"
+            cy="68"
+            r="14"
+            fill="none"
+            stroke="#FF5258"
+            stroke-width="2"
+          />
+          <circle
             id="map-active-pulse"
             cx="95"
             cy="68"
-            r="13"
+            r="12"
             fill="#D61920"
             stroke="#FFFFFF"
             stroke-width="3"
@@ -325,8 +359,13 @@ import {
         <p class="section-kicker">03 / SCROLL-SCRUB CONCRETE REEL (11 FRAMES)</p>
         <h2 class="section-h2">Jl. Pancasila 66 Floor Run.</h2>
       </div>
-      <div style="font-family:var(--font-mono); font-size:0.78rem; color:var(--text-muted);">
-        SCROLL DOWN TO SCRUB ALL 11 PARK STATIONS HORIZONTALLY
+      <div>
+        <div style="font-family:var(--font-mono); font-size:0.76rem; color:var(--text-muted);">
+          SCROLL PROGRESS: <strong id="filmstrip-pct" style="color:var(--brand-red-hi);">0%</strong>
+        </div>
+        <div class="filmstrip-progress-track" aria-hidden="true">
+          <div id="filmstrip-progress-bar" class="filmstrip-progress-bar"></div>
+        </div>
       </div>
     </div>
 
@@ -419,6 +458,7 @@ import {
       </div>
       <div style="display:flex; flex-wrap:wrap; gap:16px; flex:1 1 380px; justify-content:flex-end;">
         <img
+          class="coaching-photo"
           src={base("/assets/images/about/about-1.jpg")}
           alt="Graffiti mural and concrete transition wall at Progress Skaterpark Tegal"
           width="720"
@@ -427,6 +467,7 @@ import {
           style="width:220px; height:150px; object-fit:cover; border:2px solid var(--border-strong);"
         />
         <img
+          class="coaching-photo"
           src={base("/assets/images/about/about-2.jpg")}
           alt="Concrete skatepark floor and quarter-pipe run at Progress Skaterpark Tegal"
           width="720"
@@ -494,12 +535,13 @@ import {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const isDesktop = window.innerWidth >= 768;
 
-      // 1. 8-Deck Radial Fan Positioning & Selection
+      // 1. 8-Deck Radial Fan Positioning, Hover Selection & Auto-Cycle
       const fanItems = Array.from(document.querySelectorAll(".fan-deck-item"));
       let currentIdx = 1;
       let wideSpread = true;
+      let autoCycleTimer = null;
 
-      function layoutFan() {
+      function layoutFan(staggerDeal) {
         if (reduced || window.innerWidth < 768) return;
         const mid = (fanItems.length - 1) / 2;
         const stepAngle = wideSpread ? 11 : 5.5;
@@ -509,8 +551,8 @@ import {
           const isSel = i === currentIdx;
           const rot = offset * stepAngle;
           const x = offset * stepX;
-          const y = Math.abs(offset) * (wideSpread ? 16 : 8) - (isSel ? 34 : 0);
-          const sc = isSel ? 1.12 : 0.94;
+          const y = Math.abs(offset) * (wideSpread ? 16 : 8) - (isSel ? 38 : 0);
+          const sc = isSel ? 1.14 : 0.94;
           item.style.zIndex = String(isSel ? 30 : 10 + i);
           if (window.gsap) {
             gsap.to(item, {
@@ -518,8 +560,11 @@ import {
               y: y,
               rotation: rot,
               scale: sc,
-              duration: 0.45,
-              ease: "power3.out",
+              opacity: 1,
+              duration: staggerDeal ? 0.65 : 0.42,
+              delay: staggerDeal ? i * 0.055 : 0,
+              ease: staggerDeal ? "back.out(1.5)" : "power3.out",
+              overwrite: "auto",
             });
           } else {
             item.style.transform =
@@ -543,12 +588,22 @@ import {
             active.getAttribute("data-specs");
           document.getElementById("active-deck-note").textContent =
             active.getAttribute("data-note");
+          if (!reduced && window.gsap) {
+            gsap.fromTo(
+              "#deck-readout-box",
+              { y: 10, opacity: 0.45 },
+              { y: 0, opacity: 1, duration: 0.28, ease: "power2.out", overwrite: "auto" }
+            );
+          }
         }
-        layoutFan();
+        layoutFan(false);
       }
 
       fanItems.forEach((item, i) => {
         item.addEventListener("click", () => selectDeck(i));
+        item.addEventListener("pointerenter", () => {
+          if (isDesktop) selectDeck(i);
+        });
         item.addEventListener("keydown", (e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -567,7 +622,21 @@ import {
         spreadBtn.addEventListener("click", () => {
           wideSpread = !wideSpread;
           spreadBtn.setAttribute("aria-pressed", String(wideSpread));
-          layoutFan();
+          layoutFan(false);
+        });
+      }
+
+      const autoBtn = document.getElementById("fan-autoplay-toggle");
+      if (autoBtn) {
+        autoBtn.addEventListener("click", () => {
+          const active = autoBtn.getAttribute("aria-pressed") === "true";
+          autoBtn.setAttribute("aria-pressed", String(!active));
+          if (!active) {
+            autoCycleTimer = setInterval(() => selectDeck(currentIdx + 1), 1800);
+          } else if (autoCycleTimer) {
+            clearInterval(autoCycleTimer);
+            autoCycleTimer = null;
+          }
         });
       }
 
@@ -591,39 +660,67 @@ import {
         });
       }
 
-      // 2. 11-Waypoint Blueprint Map Switcher
+      // 2. 11-Waypoint Blueprint Map Switcher (Click & Hover + Radar Pulse)
       const wpBtns = document.querySelectorAll(".waypoint-btn[data-wp-idx]");
       const pulse = document.getElementById("map-active-pulse");
-      wpBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          wpBtns.forEach((b) => b.setAttribute("aria-selected", String(b === btn)));
-          document.getElementById("wp-zone").textContent = btn.getAttribute("data-zone");
-          document.getElementById("wp-title").textContent = btn.getAttribute("data-title");
-          document.getElementById("wp-desc").textContent = btn.getAttribute("data-desc");
-          const img = document.getElementById("wp-img");
-          img.src = btn.getAttribute("data-img");
+      const pulseRing = document.getElementById("map-pulse-ring");
+
+      function activateWaypoint(btn) {
+        wpBtns.forEach((b) => b.setAttribute("aria-selected", String(b === btn)));
+        document.getElementById("wp-zone").textContent = btn.getAttribute("data-zone");
+        document.getElementById("wp-title").textContent = btn.getAttribute("data-title");
+        document.getElementById("wp-desc").textContent = btn.getAttribute("data-desc");
+        const img = document.getElementById("wp-img");
+        const nextSrc = btn.getAttribute("data-img");
+        if (img.getAttribute("src") !== nextSrc) {
+          img.src = nextSrc;
           img.alt = btn.getAttribute("data-title") + " at Progress Skaterpark Tegal";
-          if (pulse) {
-            const cx = btn.getAttribute("data-cx");
-            const cy = btn.getAttribute("data-cy");
-            if (!reduced && window.gsap) {
-              gsap.to(pulse, { attr: { cx: cx, cy: cy }, duration: 0.4, ease: "back.out(1.7)" });
-            } else {
-              pulse.setAttribute("cx", cx);
-              pulse.setAttribute("cy", cy);
-            }
+          if (!reduced && window.gsap) {
+            gsap.fromTo(
+              img,
+              { scale: 0.94, opacity: 0.35 },
+              { scale: 1, opacity: 1, duration: 0.35, ease: "power2.out", overwrite: "auto" }
+            );
           }
+        }
+        const cx = btn.getAttribute("data-cx");
+        const cy = btn.getAttribute("data-cy");
+        if (!reduced && window.gsap) {
+          if (pulse) gsap.to(pulse, { attr: { cx: cx, cy: cy }, duration: 0.4, ease: "back.out(1.7)" });
+          if (pulseRing) gsap.to(pulseRing, { attr: { cx: cx, cy: cy }, duration: 0.4, ease: "back.out(1.7)" });
+        } else {
+          if (pulse) { pulse.setAttribute("cx", cx); pulse.setAttribute("cy", cy); }
+          if (pulseRing) { pulseRing.setAttribute("cx", cx); pulseRing.setAttribute("cy", cy); }
+        }
+      }
+
+      wpBtns.forEach((btn) => {
+        btn.addEventListener("click", () => activateWaypoint(btn));
+        btn.addEventListener("pointerenter", () => {
+          if (isDesktop) activateWaypoint(btn);
         });
       });
 
-      // 3. Dispatch Hover Backdrop + Floating Cursor Photo Preview
+      // 3. Dispatch Hover Backdrop + Smooth Velocity-Tilted Floating Cursor Photo Preview
       const bgImg = document.getElementById("dispatch-bg-img");
       const floatPreview = document.getElementById("floating-dispatch-preview");
       const floatImg = document.getElementById("floating-dispatch-img");
+      let floatXTo = null;
+      let floatYTo = null;
+      if (!reduced && isDesktop && floatPreview && window.gsap) {
+        floatXTo = gsap.quickTo(floatPreview, "left", { duration: 0.22, ease: "power3" });
+        floatYTo = gsap.quickTo(floatPreview, "top", { duration: 0.22, ease: "power3" });
+      }
+
       document.querySelectorAll(".dispatch-strip").forEach((strip) => {
         const imgUrl = strip.getAttribute("data-dispatch-img");
         const swap = () => {
-          if (bgImg) bgImg.src = imgUrl;
+          if (bgImg && bgImg.getAttribute("src") !== imgUrl) {
+            bgImg.src = imgUrl;
+            if (!reduced && window.gsap) {
+              gsap.fromTo(bgImg, { scale: 1.06, opacity: 0.3 }, { scale: 1, opacity: 1, duration: 0.45 });
+            }
+          }
           if (!reduced && isDesktop && floatPreview && floatImg) {
             floatImg.src = imgUrl;
             floatPreview.classList.add("is-visible");
@@ -633,8 +730,13 @@ import {
         strip.addEventListener("focus", swap);
         strip.addEventListener("pointermove", (e) => {
           if (!reduced && isDesktop && floatPreview) {
-            floatPreview.style.left = e.clientX + "px";
-            floatPreview.style.top = e.clientY + "px";
+            if (floatXTo && floatYTo) {
+              floatXTo(e.clientX);
+              floatYTo(e.clientY);
+            } else {
+              floatPreview.style.left = e.clientX + "px";
+              floatPreview.style.top = e.clientY + "px";
+            }
           }
         });
         strip.addEventListener("pointerleave", () => {
@@ -648,7 +750,11 @@ import {
           document
             .querySelectorAll("[data-tier-btn]")
             .forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-          document.getElementById("rider-tier").value = btn.getAttribute("data-tier-btn");
+          const tierInput = document.getElementById("rider-tier");
+          tierInput.value = btn.getAttribute("data-tier-btn");
+          if (!reduced && window.gsap) {
+            gsap.fromTo(btn, { scale: 0.96 }, { scale: 1, duration: 0.25, ease: "back.out(2)" });
+          }
         });
       });
 
@@ -675,12 +781,17 @@ import {
               win +
               "). No external message is sent.";
           }
+          if (!reduced && window.gsap) {
+            gsap.fromTo(toast, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" });
+          }
         });
       }
 
-      // 5. GSAP + ScrollTrigger + SplitText
+      // 5. GSAP + ScrollTrigger + SplitText Choreography Across All Sections
       if (!reduced && window.gsap && window.ScrollTrigger) {
         gsap.registerPlugin(ScrollTrigger);
+
+        // Hero SplitText + Staggered Intro
         if (window.SplitText) {
           gsap.registerPlugin(SplitText);
           (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
@@ -696,20 +807,108 @@ import {
           });
         }
 
+        gsap.from(["#hero-kicker", "#hero-sublead", "#hero-ctas", "#hero-telemetry"], {
+          y: 28,
+          opacity: 0,
+          stagger: 0.12,
+          duration: 0.75,
+          delay: 0.25,
+          ease: "power3.out",
+        });
+
+        // Continuous levitation + 3D cursor tilt on Hero Floating Deck
+        const heroDeck = document.getElementById("hero-floating-deck");
+        if (heroDeck && isDesktop) {
+          gsap.to(heroDeck, {
+            y: -16,
+            rotation: -7,
+            duration: 2.2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+          });
+          const rotXTo = gsap.quickTo(heroDeck, "rotationX", { duration: 0.35, ease: "power2.out" });
+          const rotYTo = gsap.quickTo(heroDeck, "rotationY", { duration: 0.35, ease: "power2.out" });
+          window.addEventListener("pointermove", (e) => {
+            const nx = (e.clientX / window.innerWidth - 0.5) * 28;
+            const ny = (e.clientY / window.innerHeight - 0.5) * -22;
+            rotYTo(nx);
+            rotXTo(ny);
+          });
+        }
+
+        // Continuous SVG Radar Ring Pulse
+        if (pulseRing) {
+          gsap.fromTo(
+            pulseRing,
+            { attr: { r: 12 }, opacity: 0.95 },
+            { attr: { r: 34 }, opacity: 0, duration: 1.35, repeat: -1, ease: "power2.out" }
+          );
+        }
+
         if (isDesktop) {
-          gsap.to("#hero-portal", {
-            clipPath: "circle(100% at 50% 50%)",
-            ease: "none",
+          // A. Pinned Hero Portal Scrub + Deck Scroll Rotation
+          const heroTl = gsap.timeline({
             scrollTrigger: {
               trigger: "#hero-stage",
               start: "top top",
               end: "+=850",
-              scrub: 1,
+              scrub: 0.7,
               pin: true,
             },
           });
+          heroTl
+            .to(
+              "#hero-portal",
+              {
+                clipPath: "circle(100% at 50% 50%)",
+                ease: "none",
+              },
+              0
+            )
+            .fromTo(
+              "#hero-portal-img",
+              { scale: 1.18 },
+              { scale: 1, ease: "none" },
+              0
+            )
+            .to(
+              "#hero-floating-deck",
+              {
+                scale: 1.18,
+                rotation: 22,
+                x: -40,
+                ease: "none",
+              },
+              0
+            );
 
+          // B. Scroll-Triggered Deal-Out of the 8-Deck Radial Fan
+          gsap.set(fanItems, { x: 0, y: 120, rotation: 0, scale: 0.6, opacity: 0 });
+          ScrollTrigger.create({
+            trigger: "#deck-fan",
+            start: "top 75%",
+            once: true,
+            onEnter: () => layoutFan(true),
+          });
+
+          // C. Blueprint Map Stagger Reveal
+          gsap.from(".waypoint-btn", {
+            y: 18,
+            opacity: 0,
+            stagger: 0.04,
+            duration: 0.45,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: "#blueprint-map",
+              start: "top 75%",
+            },
+          });
+
+          // D. Pinned Horizontal Filmstrip Scroll-Scrub + Live Progress Bar
           const track = document.getElementById("filmstrip-track");
+          const progBar = document.getElementById("filmstrip-progress-bar");
+          const pctEl = document.getElementById("filmstrip-pct");
           if (track) {
             gsap.to(track, {
               x: () => -(track.scrollWidth - window.innerWidth + 120),
@@ -718,17 +917,50 @@ import {
                 trigger: "#filmstrip",
                 start: "top top",
                 end: () => "+=" + (track.scrollWidth - window.innerWidth + 120),
-                scrub: 1,
+                scrub: 0.8,
                 pin: true,
                 invalidateOnRefresh: true,
+                onUpdate: (self) => {
+                  if (progBar) progBar.style.transform = "scaleX(" + self.progress.toFixed(3) + ")";
+                  if (pctEl) pctEl.textContent = Math.round(self.progress * 100) + "%";
+                },
               },
             });
           }
+
+          // E. Dispatches Staggered Slide-In
+          gsap.from(".dispatch-strip", {
+            x: -36,
+            opacity: 0,
+            stagger: 0.07,
+            duration: 0.55,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#dispatches",
+              start: "top 75%",
+            },
+          });
+
+          // F. Coaching Console Reveal
+          gsap.from([".coaching-photo", ".tier-pill", "#booking-form"], {
+            y: 28,
+            opacity: 0,
+            stagger: 0.08,
+            duration: 0.55,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#coaching",
+              start: "top 78%",
+            },
+          });
+        } else {
+          layoutFan(false);
         }
+      } else {
+        layoutFan(false);
       }
 
-      layoutFan();
-      window.addEventListener("resize", layoutFan);
+      window.addEventListener("resize", () => layoutFan(false));
     })();
   </script>
 </Base>

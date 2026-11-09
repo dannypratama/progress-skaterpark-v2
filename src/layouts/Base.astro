@@ -25,6 +25,10 @@ const {
       href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@800;900&family=Darker+Grotesque:wght@500;700&family=JetBrains+Mono:wght@500;700&family=Unbounded:wght@700;900&display=swap"
       rel="stylesheet"
     />
+    <!-- Load GSAP Core + ScrollTrigger + SplitText in head so all page scripts have immediate access -->
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -53,13 +57,17 @@ const {
 
     <SiteFooter />
 
-    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
-    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
-    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
     <script is:inline>
       (function () {
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const isDesktop = window.innerWidth >= 768;
+
+        if (window.gsap && window.ScrollTrigger) {
+          gsap.registerPlugin(ScrollTrigger);
+        }
+        if (window.gsap && window.SplitText) {
+          gsap.registerPlugin(SplitText);
+        }
 
         // 1. Mobile Navigation Toggle + Escape Key
         const menuBtn = document.getElementById("menu-btn");
@@ -106,7 +114,7 @@ const {
               const cx = rect.left + rect.width / 2;
               const cy = rect.top + rect.height / 2;
               const angle = Math.atan2(e.clientY - cy, e.clientX - cx);
-              const dist = Math.min(5, Math.hypot(e.clientX - cx, e.clientY - cy) / 22);
+              const dist = Math.min(5.5, Math.hypot(e.clientX - cx, e.clientY - cy) / 20);
               const tx = Math.cos(angle) * dist;
               const ty = Math.sin(angle) * dist;
               p.style.transform = "translate(" + tx + "px, " + ty + "px)";
@@ -117,8 +125,8 @@ const {
         // 4. Custom Cursor Spotlight Orb (Guillaume Colombel mechanic)
         const orb = document.getElementById("cursor-orb");
         if (!reduced && isDesktop && orb && window.gsap) {
-          const xTo = gsap.quickTo(orb, "left", { duration: 0.2, ease: "power3" });
-          const yTo = gsap.quickTo(orb, "top", { duration: 0.2, ease: "power3" });
+          const xTo = gsap.quickTo(orb, "left", { duration: 0.18, ease: "power3" });
+          const yTo = gsap.quickTo(orb, "top", { duration: 0.18, ease: "power3" });
           window.addEventListener("pointermove", (e) => {
             orb.classList.add("is-active");
             xTo(e.clientX);
