@@ -2,5 +2,5 @@ node_modules/
 dist/
 .astro/
 .DS_Store
-moodboard-v3/
-assets/
+/moodboard-v3/
+/assets/
